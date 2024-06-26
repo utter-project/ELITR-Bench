@@ -83,6 +83,9 @@ where:
 - `generated-response` contains the actual generated answer;
 - `gpt-4-eval_score`, `prometheus-eval_score`, `gold-human-eval_score`, `silver-human-eval_score` indicate the numeric score between 1 and 10 obtained by different evaluators for the generated answer (`prometheus-eval_score`, `gold-human-eval_score`, `silver-human-eval_score` are only reported for the `all-eval` JSON file).
 
-### Acknowledgments
+### Funding
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Flag_of_Europe.svg/1200px-Flag_of_Europe.svg.png" width=10% height=10%> 
 
-This work was partially funded by the European Union’s Horizon Europe (HE) Research and Innovation programme under Grant Agreement No 101070631.
+This is an output of the European Project UTTER (Unified Transcription and Translation for Extended Reality) funded by European Union’s Horizon Europe Research and Innovation programme under grant agreement number 101070631.
+
+For more information please visit https://he-utter.eu/
