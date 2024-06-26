@@ -85,4 +85,4 @@ where:
 
 ### Acknowledgments
 
-TBD
+This work was partially funded by the European Union’s Horizon Europe (HE) Research and Innovation programme under Grant Agreement No 101070631.
