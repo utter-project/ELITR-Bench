@@ -13,7 +13,14 @@ For more details on this dataset and the experiments we conducted, have a look a
       url={https://arxiv.org/abs/2403.20262}
 }
 ```
-<!-- Blinking news update --> <p style="color: red; font-weight: bold; animation: blinker 1s linear infinite; text-align: center;"> NEWS: Our paper has been accepted to COLING 2025 conference and will be presented in Abu Dhabi, UAE from January 19th to 24th, 2025! </p> <style> @keyframes blinker { 50% { opacity: 0; } } </style>
+---
+
+<div style="border: 1px solid #007acc; padding: 10px; border-radius: 5px; background-color: #f0f8ff;">
+  <strong>NEWS:</strong> Our paper has been accepted to <strong>COLING 2025</strong> conference and will be presented in <strong>Abu Dhabi, UAE</strong> from <strong>January 19th to 24th, 2025</strong>!
+</div>
+
+---
+
 
 ### Repository content
 
