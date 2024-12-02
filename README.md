@@ -91,6 +91,11 @@ where:
 - `generated-response` contains the actual generated answer;
 - `gpt-4-eval_score`, `prometheus-eval_score`, `gold-human-eval_score`, `silver-human-eval_score` indicate the numeric score between 1 and 10 obtained by different evaluators for the generated answer (`prometheus-eval_score`, `gold-human-eval_score`, `silver-human-eval_score` are only reported for the `all-eval` JSON file).
 
+### Czech Version (Update Dec 2024)
+
+We are thrilled to announce the addition of a Czech version to the ELITR-Bench work (`czech.zip`)! Thanks to the dedicated efforts of Ondřej Bojar from Charles University in Prague, Czech Republic, all questions and reference answers have been translated into Czech. This update enables a cross-lingual version of the meeting assistant task, allowing users to ask questions in Czech about an English meeting transcript and receive answers in Czech. These answers can now be evaluated against Czech reference answers, broadening the task's accessibility and utility.
+To unzip the archive, run the commands `unzip czech.zip` and **indicate '_utter_' as password.**
+
 ### Funding
 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Flag_of_Europe.svg/1200px-Flag_of_Europe.svg.png" width=10% height=10%> 
 
