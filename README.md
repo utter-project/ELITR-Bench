@@ -1,6 +1,6 @@
 ### ELITR-Bench description
 
-This repository contains the dataset associated to ELITR-Bench – a benchmark for the evaluation of long-context LLMs on meeting transcripts. The meeting data used in this benchmark originally comes from the ELITR dataset, which is available [here](https://lindat.mff.cuni.cz/repository/xmlui/handle/11234/1-4692).
+This repository contains the dataset and code associated to ELITR-Bench – a benchmark for the evaluation of long-context LLMs on meeting transcripts. The meeting data used in this benchmark originally comes from the ELITR dataset, which is available [here](https://lindat.mff.cuni.cz/repository/xmlui/handle/11234/1-4692).
 
 For more details on this dataset and the experiments we conducted, have a look at [our paper](https://arxiv.org/abs/2403.20262). If you found ELITR-Bench useful and want to refer to our work, please use the following citation:
 
@@ -16,13 +16,13 @@ For more details on this dataset and the experiments we conducted, have a look a
 ---
 
 <div style="border: 1px solid #007acc; padding: 10px; border-radius: 5px; background-color: #f0f8ff;">
-  <strong>NEWS:</strong> Our paper has been accepted to <strong>COLING 2025</strong> conference and will be presented in <strong>Abu Dhabi, UAE</strong> from <strong>January 19th to 24th, 2025</strong>!
+  <strong>NEWS:</strong> Our paper has been accepted to the <strong>COLING 2025</strong> conference and will be presented in <strong>Abu Dhabi, UAE</strong> from <strong>January 19th to 24th, 2025</strong>!
 </div>
 
 ---
 
 
-### Repository content
+### Data description
 
 The repository includes two zip archives: `data.zip` and `generated-responses.zip`. The archives are protected by a password to avoid [potential contamination](https://arxiv.org/abs/2310.18018) of LLMs trained on web scrapped data. To unzip the archives, run the commands `unzip data.zip` and `unzip generated-responses.zip` and **indicate '_utter_' as password.**
 
@@ -40,7 +40,7 @@ where:
 - `{split}` is either the `dev` or `test2` split set;
 - `{evaluator}` is either `gpt-4-eval` (indicating that the reported scores are obtained from the GPT-4 evaluator) or `all-eval` (indicating that we report the scores for the 4 different evaluators considered in the "LLM-based evaluation assessment" section of the paper).
 
-### JSON file structure 
+#### JSON file structure
 
 Each JSON file is structured as follows:
 
@@ -74,7 +74,7 @@ Each JSON file is structured as follows:
 	    ...
 	  ]
 	}
-	
+
 where:
 
 - `split` is either `dev` or `test2`;
@@ -91,10 +91,63 @@ where:
 - `generated-response` contains the actual generated answer;
 - `gpt-4-eval_score`, `prometheus-eval_score`, `gold-human-eval_score`, `silver-human-eval_score` indicate the numeric score between 1 and 10 obtained by different evaluators for the generated answer (`prometheus-eval_score`, `gold-human-eval_score`, `silver-human-eval_score` are only reported for the `all-eval` JSON file).
 
-### Czech Version (Update Dec 2024)
+#### Czech Version (Update Dec 2024)
 
 We are thrilled to announce the addition of a Czech version to the ELITR-Bench work (`czech.zip`)! Thanks to the dedicated efforts of Ondřej Bojar from Charles University in Prague, Czech Republic, all questions and reference answers have been translated into Czech. This update enables a cross-lingual version of the meeting assistant task, allowing users to ask questions in Czech about an English meeting transcript and receive answers in Czech. These answers can now be evaluated against Czech reference answers, broadening the task's accessibility and utility.
 To unzip the archive, run the commands `unzip czech.zip` and **indicate '_utter_' as password.**
+
+### How to run the code
+
+#### Package and version requirements
+
+This code should be run with Python 3.10. The required Python packages, along with their version, are provided in `requirements.txt`. Note that to run the inference with more recent models (LLaMA-3.1 and Phi-3), different package versions are required; these are specified in `requirements-alt.txt`. This will be reminded when introducing the corresponding scripts.
+
+#### Preparation
+
+Before running the code, the following steps must be conducted to move the required data files in the proper folders:
+
+- Unzip the ELITR-Bench data archive named `data.zip` using the password 'utter'.
+- Fetch and prepare the ELITR transcripts through the following steps:
+  1. Download ELITR-minuting-corpus.zip from [this link](https://lindat.mff.cuni.cz/repository/xmlui/bitstream/handle/11234/1-4692/ELITR-minuting-corpus.zip).
+  2. Unzip the archive at the root of the project. This should create a directory named `ELITR-minuting-corpus`.
+  3. Run the following Python script to extract the transcripts from `ELITR-minuting-corpus` (which includes moving them to `data` and renaming them based on their corresponding meeting ID):
+     ```
+     python -m preparation.extract_transcripts
+     ```
+
+#### Response generation
+
+In this step, we detail the commands to generate responses for the ELITR-Bench questions, using the different models included in the paper.
+
+- Generating responses with LLaMA-2-based models is done with the `inference/inference_llama2.py` script. This script should be used for the following models: `LongAlpaca-{7B, 13B}`, `LongChat-7B-v1.5`, `Vicuna-{7B, 13B}-v1.5`, `LongAlign-{7B, 13B}`. Example command for inference with `Vicuna-13b-v1.5` on ELITR-Bench-QA test set in single-turn mode:
+  ```
+  python -m inference.inference_llama2 --data_path "./data" --json_filename "elitr-bench-qa_test2.json" --base_model "lmsys/vicuna-13b-v1.5-16k" --flash_attn True --max_gen_len 512 --context_size 32768 --temperature 0.6 --top_p 0.9 --repetition_penalty 1.1 --do_sample True --conv_format "vicuna_v1.1" --q_marker True --mode st --seed 2023
+  ```
+- Generating responses with LLaMA-3.1-8B is done with the `inference/inference_llama3dot1.py` script. This script requires the package versions indicated in the `requirements-alt.txt` file. Example command for inference on ELITR-Bench-QA test set in single-turn mode:
+  ```
+  python -m inference.inference_llama3dot1 --data_path "./data" --json_filename "elitr-bench-qa_test2.json" --base_model "meta-llama/Meta-Llama-3.1-8B-Instruct" --max_gen_len 512 --temperature 0.0 --top_p 1.0 --repetition_penalty 1.0 --do_sample False --q_marker False --mode st --seed 2023
+  ```
+- Generating responses with Phi-3-small-128k is done with the `inference/inference_phi3.py` script. This script requires the package versions indicated in the `requirements-alt.txt` file. Example command for inference on ELITR-Bench-QA test set in single-turn mode:
+  ```
+  python -m inference.inference_phi3 --data_path "./data" --json_filename "elitr-bench-qa_test2.json" --base_model "microsoft/Phi-3-small-128k-instruct" --max_gen_len 512 --temperature 0.0 --top_p 1.0 --repetition_penalty 1.0 --do_sample False --q_marker False --mode st --seed 2023
+  ```
+- Generating responses with OpenAI GPT models is done with the `inference/inference_gpt.py` script. This script requires that the environment variable OPENAI_API_KEY is defined in your bash profile, to provide access to your OpenAI account. Example command for inference with GPT-4 on ELITR-Bench-QA test set in single-turn mode:
+  ```
+  python -m inference.inference_gpt --data_path "./data" --json_filename "elitr-bench-qa_test2.json" --base_model "gpt-4-1106-preview" --max_gen_len 512 --temperature 0.6 --top_p 0.9 --mode st --seed 2023
+  ```
+
+#### Evaluation
+
+Generated responses can be automatically evaluated using either GPT-4 (and other OpenAI models) or Prometheus as LLM-judges:
+
+- The evaluation with OpenAI GPT models is done with the `eval/eval_gpt.py` script. This script requires that the environment variable OPENAI_API_KEY is defined in your bash profile, to provide access to your OpenAI account. Example command for evaluation with GPT-4 on responses generated for ELITR-Bench-QA test set in single-turn mode:
+  ```
+  python -m eval.eval_gpt --data_path "./data" --json_filename "elitr-bench-qa_test2_st_s2023.json" --base_model "gpt-4-0613" --temperature 0.6 --top_p 0.9 --max_gen_len 1024 --seed 2023
+  ```
+- The evaluation with Prometheus is done with the `eval/eval_prometheus.py` script. Example command for evaluation on responses generated for ELITR-Bench-QA test set in single-turn mode:
+  ```
+  python -m eval.eval_prometheus --data_path "./data" --json_filename "elitr-bench-qa_test2_st_s2023.json" --base_model "prometheus-eval/prometheus-13b-v1.0" --temperature 0.6 --top_p 0.9 --max_gen_len 1024 --repetition_penalty 1.0 --do_sample True --seed 2023
+  ```
 
 ### Funding
 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Flag_of_Europe.svg/1200px-Flag_of_Europe.svg.png" width=10% height=10%> 
