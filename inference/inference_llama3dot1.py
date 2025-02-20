@@ -18,6 +18,7 @@ def parse_config():
     parser.add_argument('--q_marker', type=lambda x: bool(strtobool(x)), default=False, help='add QUESTION and ANSWER markers to prompt')
     parser.add_argument('--mode', type=str, default="st", choices=["st", "mt"], help='use single-turn (st) or multi-turn (mt) mode')
     parser.add_argument('--seed', type=int, default=2023, help='seed used for random sampling')
+    parser.add_argument('--lang', type=str, default="english", choices=["english", "czech", "en", "cz"], help='language of the questions and expected answers')
     args = parser.parse_args()
     return args
 
@@ -96,7 +97,7 @@ def main(args):
         # Define the initial message containing the basic instructions and the transcript
         transcript_path = args.data_path + "/" + meeting_id + ".txt"
         transcript = extract_text(transcript_path)
-        initial_message = format_inference_prompt(transcript)
+        initial_message = format_inference_prompt(transcript, args.lang)
 
         for id, question in enumerate(questions):
             print(question["id"], flush=True)
@@ -134,8 +135,8 @@ def main(args):
 
     str_split = json_file_path.split(".")
     new_json_file_path = ".".join(str_split[:-1]) + "_" + args.mode + "_s" + str(args.seed) + "_" + model_name + "." + str_split[-1]
-    with open(new_json_file_path, 'w') as f:
-        json.dump(elitrbench_dict, f, indent=2)
+    with open(new_json_file_path, 'w', encoding="utf-8") as f:
+        json.dump(elitrbench_dict, f, ensure_ascii=False, indent=2)
 
 if __name__ == "__main__":
     args = parse_config()

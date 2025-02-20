@@ -15,6 +15,7 @@ def parse_config():
     parser.add_argument('--top_p', type=float, default=0.9, help='top-p hyperparameter')
     parser.add_argument('--max_gen_len', type=int, default=1024, help='maximum generation length')
     parser.add_argument('--seed', type=int, default=2023, help='seed used for random sampling')
+    parser.add_argument('--lang', type=str, default="english", choices=["english", "czech", "en", "cz"], help='language of the questions and expected answers')
     args = parser.parse_args()
     return args
 
@@ -52,7 +53,7 @@ def main(args):
             for response_dict in question["generated-responses"]:
                 # Define the prompt
                 generated_response = response_dict["generated-response"].strip()
-                prompt = format_gpt_eval_prompt(formatted_question, generated_response, groundtruth_answer)
+                prompt = format_gpt_eval_prompt(formatted_question, generated_response, groundtruth_answer, args.lang)
 
                 # Convert the prompt the OpenAI format
                 conv = get_conv_template("chatgpt")
@@ -70,14 +71,14 @@ def main(args):
                 if score is not None:
                     score = score.group(1)
                 else: # Manual check required
-                    print("Boxed score not found, using placeholder score 0", flush=True)
-                    score = "0"
+                    print("Boxed score not found, using placeholder score -1", flush=True)
+                    score = "-1"
                 response_dict[model_name + "-eval_score"] = score
 
     str_split = json_file_path.split(".")
     new_json_file_path = ".".join(str_split[:-1]) + "_eval_" + model_name + "." + str_split[-1]
-    with open(new_json_file_path, 'w') as f:
-        json.dump(elitrbench_dict, f, indent=2)
+    with open(new_json_file_path, 'w', encoding="utf-8") as f:
+        json.dump(elitrbench_dict, f, ensure_ascii=False, indent=2)
 
 if __name__ == "__main__":
     args = parse_config()
