@@ -136,6 +136,8 @@ In this step, we detail the commands to generate responses for the ELITR-Bench q
   python -m inference.inference_gpt --data_path "./data" --json_filename "elitr-bench-qa_test2.json" --base_model "gpt-4-1106-preview" --max_gen_len 512 --temperature 0.6 --top_p 0.9 --mode st --seed 2023
   ```
 
+To generate responses in the cross-lingual scenario (with English transcripts, Czech questions and expecting Czech responses), the argument ``--lang "czech"`` should be added to the command to select the appropriate prompt. Note that the cross-lingual scenario also requires using the JSON files contained in the czech.zip archive (e.g., using ``elitr-bench-czech-qa_test2.json`` instead of ``elitr-bench-qa_test2.json``).
+
 #### Evaluation
 
 Generated responses can be automatically evaluated using either GPT-4 (and other OpenAI models) or Prometheus as LLM-judges:
@@ -148,6 +150,9 @@ Generated responses can be automatically evaluated using either GPT-4 (and other
   ```
   python -m eval.eval_prometheus --data_path "./data" --json_filename "elitr-bench-qa_test2_st_s2023.json" --base_model "prometheus-eval/prometheus-13b-v1.0" --temperature 0.6 --top_p 0.9 --max_gen_len 1024 --repetition_penalty 1.0 --do_sample True --seed 2023
   ```
+
+Similarly to the response selection scripts, the argument ``--lang "czech"`` should be added to the commands above to perform the evaluation in the English-Czech cross-lingual scenario. Again, the cross-lingual scenario also requires using the JSON files contained in the czech.zip archive (e.g., using ``elitr-bench-czech-qa_test2.json`` instead of ``elitr-bench-qa_test2.json``).
+
 
 ### Funding
 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Flag_of_Europe.svg/1200px-Flag_of_Europe.svg.png" width=10% height=10%> 
