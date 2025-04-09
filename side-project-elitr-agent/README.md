@@ -8,6 +8,8 @@
 - [s.duong@criteo.com](mailto:s.duong@criteo.com)  
 
 📥 **Download:** [elitr-bench-agent-dev.zip](./elitr-bench-agent-dev.zip) — the outcome of the miniproject, containing the _elitr-bench-agent_ dataset for all dev meetings.
+🎓 **Final student presentation** of the mini-project, presented on the last day of **ALPS 2025** — [view here](./ELITR_Agent_Bench__An_Agent_Benchmark_for_Meeting_Transcripts.pdf).
+
 
 
 ---
